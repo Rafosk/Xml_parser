@@ -25,29 +25,24 @@ import org.w3c.dom.NamedNodeMap;
 
 import java.io.File;
 
-import org.apache.commons.io.FileUtils;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class main {
+public class mains {
 
 	public static void main(String[] args) throws IOException, ParserConfigurationException, SAXException {
 
+		String rootPath = "C:\\Users\\Rafal.Krakiewicz\\Desktop\\praca\\190215\\";
+				
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		File source = new File("C:\\Users\\Rafal.Krakiewicz\\Desktop\\praca\\190215\\source\\SLC_All_Languages.xml");
-		File es = new File("C:\\Users\\Rafal.Krakiewicz\\Desktop\\praca\\190215\\es\\SLC_All_Languages.xml");
-		File hu = new File("C:\\Users\\Rafal.Krakiewicz\\Desktop\\praca\\190215\\hu\\SLC_All_Languages.xml");
-		File pt = new File("C:\\Users\\Rafal.Krakiewicz\\Desktop\\praca\\190215\\pt\\SLC_All_Languages.xml");
-
-		// String xmlFile = "CN.xml";
-		// File file = new File("CN.xml");
-
-		// DocumentBuilder builder = factory.newDocumentBuilder();
-		// org.w3c.dom.Document doc2 = builder.parse(source);
+		File source = new File(rootPath + "source\\SLCMSG_All_Languages.xml");
+		File es = new File(rootPath + "es\\SLCMSG_All_Languages.xml");
+		File hu = new File(rootPath + "hu\\SLCMSG_All_Languages.xml");
+		File pt = new File(rootPath + "pt\\SLCMSG_All_Languages.xml");
+		File fr = new File(rootPath + "fr\\SLCMSG_All_Languages.xml");
 
 		DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
+		
 		Document docDE = dBuilder.parse(source);
 		docDE.getDocumentElement().normalize();
 		NodeList nodesDE = docDE.getElementsByTagName("DE");
@@ -55,6 +50,10 @@ public class main {
 		Document docEN = dBuilder.parse(source);
 		docEN.getDocumentElement().normalize();
 		NodeList nodesEN = docEN.getElementsByTagName("EN");
+
+		Document docFR = dBuilder.parse(fr);
+		docFR.getDocumentElement().normalize();
+		NodeList nodesFR = docFR.getElementsByTagName("DE");
 		
 		Document docES = dBuilder.parse(es);
 		docES.getDocumentElement().normalize();
@@ -76,16 +75,7 @@ public class main {
 		docSLC.getDocumentElement().normalize();
 		NodeList nodesSLC = docSLC.getElementsByTagName("SLC");
 
-		for (int i = 0; i < nodesES.getLength(); i++) {
-
-			Node node = nodesES.item(i);
-
-			if (node != null) {
-				 System.out.println(node.getTextContent());
-				// System.out.println(node.getChildNodes());
-			}
-
-		}
+		allert(nodesES);
 
 		List<String> result = new ArrayList<String>();
 
@@ -99,59 +89,12 @@ public class main {
 			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 			
-			// root elements
 			Document doc = docBuilder.newDocument();
 			Element rootElement = doc.createElement("SLC");
 			doc.appendChild(rootElement);
 			
-			for (int i = 0; i < tmp.size(); i++) {
-
-				// staff elements
-				Element staff = doc.createElement(tmp.get(i));
-				rootElement.appendChild(staff);
-
-				// firstname elements
-				Element elementDE = doc.createElement("DE");
-				elementDE.appendChild(doc.createTextNode(nodesDE.item(i).getTextContent().toString()));
-				staff.appendChild(elementDE);
-
-				Element elementEN = doc.createElement("EN");
-				elementEN.appendChild(doc.createTextNode(nodesEN.item(i).getTextContent().toString()));
-				staff.appendChild(elementEN);
-				
-				Element elementFR = doc.createElement("FR");
-				elementFR.appendChild(doc.createTextNode(" "));
-				staff.appendChild(elementFR);
-				
-				Element elementIT = doc.createElement("IT");
-				elementIT.appendChild(doc.createTextNode(" "));
-				staff.appendChild(elementIT);
-				
-				Element elementPT = doc.createElement("PT");
-				elementPT.appendChild(doc.createTextNode(nodesPT.item(i).getTextContent().toString()));
-				staff.appendChild(elementPT);
-				
-				Element elementES = doc.createElement("ES");
-				elementES.appendChild(doc.createTextNode(nodesES.item(i).getTextContent().toString()));
-				staff.appendChild(elementES);
-				
-				Element elementHU = doc.createElement("HU");
-				elementHU.appendChild(doc.createTextNode(nodesHU.item(i).getTextContent().toString()));
-				staff.appendChild(elementHU);
-				
-				Element elementPL = doc.createElement("PL");
-				elementPL.appendChild(doc.createTextNode(nodesPL.item(i).getTextContent().toString()));
-				staff.appendChild(elementPL);
-				
-				Element elementBG = doc.createElement("BG");
-				elementBG.appendChild(doc.createTextNode(" "));
-				staff.appendChild(elementBG);
-				
-				Element elementZH = doc.createElement("ZH");
-				elementZH.appendChild(doc.createTextNode(" "));
-				staff.appendChild(elementZH);
-
-			}
+			addAllElements(nodesDE, nodesEN, nodesFR, nodesES, nodesHU, nodesPL, nodesPT, tmp, doc, rootElement);
+			
 			// write the content into xml file
 			TransformerFactory transformerFactory = TransformerFactory.newInstance();
 			Transformer transformer = transformerFactory.newTransformer();
@@ -160,7 +103,7 @@ public class main {
 			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
 
 			StreamResult result2 = new StreamResult(
-					new File("C:\\Users\\Rafal.Krakiewicz\\Desktop\\praca\\190215\\file.xml"));
+					new File(rootPath + "SLCMSG_All_Languages.xml"));
 
 			// Output to console for testing
 			// StreamResult result = new StreamResult(System.out);
@@ -177,10 +120,61 @@ public class main {
 
 	}
 
-	private static List<String> printNote(NodeList nodeList, List<String> result) {
-		// TODO Auto-generated method stub
 
-		// List<String> result = new ArrayList<String>();
+	private static void allert(NodeList nodesES) {
+		for (int i = 0; i < nodesES.getLength(); i++) {
+			Node node = nodesES.item(i);
+			if (node != null) {
+				 System.out.println(node.getTextContent());
+			}
+		}
+	}
+
+
+	private static void addAllElements(NodeList nodesDE, NodeList nodesEN, NodeList nodesFR, NodeList nodesES,
+			NodeList nodesHU, NodeList nodesPL, NodeList nodesPT, List<String> tmp, Document doc, Element rootElement) {
+		for (int i = 0; i < tmp.size(); i++) {
+
+			Element slc = doc.createElement(tmp.get(i));
+			rootElement.appendChild(slc);
+
+			// firstname elements
+			//Element elementDE = doc.createElement("DE");
+			//elementDE.appendChild(doc.createTextNode(nodesDE.item(i).getTextContent().toString()));
+			//staff.appendChild(elementDE);
+
+			addElement(doc, "DE" ,nodesDE.item(i).getTextContent().toString(), slc);
+			
+			addElement(doc, "EN" ,nodesEN.item(i).getTextContent().toString(), slc);
+			
+			addElement(doc, "FR" ,nodesFR.item(i).getTextContent().toString(), slc);			
+
+			addElement(doc, "IT" ," ", slc);
+			
+			addElement(doc, "PT" ,nodesPT.item(i).getTextContent().toString(), slc);
+			
+			addElement(doc, "ES" ,nodesES.item(i).getTextContent().toString(), slc);
+			
+			addElement(doc, "HU" ,nodesHU.item(i).getTextContent().toString(), slc);
+			
+			addElement(doc, "PL" ,nodesPL.item(i).getTextContent().toString(), slc);
+			
+			addElement(doc, "BG" ," ", slc);
+			
+			addElement(doc, "ZH" ," ", slc);
+
+		}
+	}
+
+	
+	private static void addElement(Document doc, String tagName, String value, Element staff) {
+		Element element = doc.createElement(tagName);
+		element.appendChild(doc.createTextNode(value));
+		staff.appendChild(element);
+	}
+	
+	
+	private static List<String> printNote(NodeList nodeList, List<String> result) {
 
 		for (int count = 0; count < nodeList.getLength(); count++) {
 
@@ -215,7 +209,6 @@ public class main {
 
 				}
 
-				// System.out.println("Node Name =" + tempNode.getNodeName() + " [CLOSE]");
 
 				if (tempNode.getNodeName().contains("MSG")) {
 					result.add(tempNode.getNodeName());
